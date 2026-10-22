@@ -1,37 +1,453 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acessa+ Escola</title><style>
-:root{--bg:#f4f8fc;--card:#fff;--text:#172b43;--border:#d6e2ef;--accent:#00a896}*{box-sizing:border-box}body{margin:0;font:16px Arial,sans-serif;line-height:1.55;background:var(--bg);color:var(--text)}body.contrast{--bg:#000;--card:#000;--text:#fff;--border:#fff;--accent:#0ff}header{background:#123b66;color:white;padding:1rem;display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}header nav,.actions,.chips{display:flex;gap:.5rem;flex-wrap:wrap}button{padding:.7rem .9rem;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);cursor:pointer;font:inherit}header button{background:transparent;color:white;border-color:#ffffff77}main{max-width:1000px;margin:auto;padding:1rem}.hero{background:linear-gradient(135deg,#123b66,#176bb4);color:white;padding:2rem;border-radius:20px;margin:1rem 0}.hero h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.1}.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.2rem;margin:1rem 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}.primary{background:var(--accent);color:#062c38;font-weight:bold}.hidden{display:none}label{display:block;font-weight:bold;margin:.7rem 0 .3rem}select,textarea{width:100%;padding:.8rem;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font:inherit}textarea{min-height:90px}.answer{white-space:pre-wrap;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1rem;margin:1rem 0}.chips button{background:#e1eefb;color:#123b66}footer{text-align:center;padding:2rem}.small{font-size:.9rem;opacity:.85}:focus-visible{outline:3px solid #ffbf47;outline-offset:3px}button:disabled{opacity:.8;cursor:default}@media(max-width:560px){header{align-items:flex-start}header nav{width:100%}header nav button{flex:1}.hero{padding:1.35rem}.card{padding:1rem}.actions button{flex:1}}</style></head><body>
-<header><div><strong style="font-size:1.4rem">Acessa+</strong><div>ESCOLA · TECNOLOGIA · EDUCAÇÃO · INCLUSÃO</div></div><nav><button onclick="show('materias')">Matérias</button><button onclick="show('tutor')">Tirar dúvidas</button><button onclick="show('atividades')">Atividades</button></nav></header><main>
-<section class="hero"><h1>Aprenda no seu ritmo.<br>Do seu jeito.</h1><p>Revise conteúdos do Ensino Médio, pratique questões e use recursos de acessibilidade. Funciona sem API paga.</p><div class="actions"><button class="primary" onclick="show('materias')">Explorar matérias</button><button onclick="show('tutor')">Tirar uma dúvida</button></div></section>
-<section class="grid"><article class="card"><h2>Acessibilidade</h2><p>Texto ajustável, contraste e leitura em voz alta.</p><div class="actions"><button onclick="font(-1)">A−</button><button onclick="font(1)">A+</button><button onclick="document.body.classList.toggle('contrast')">Contraste</button><button onclick="speechSynthesis.cancel()">Parar leitura</button></div></article><article class="card"><h2>Matérias</h2><p>Conteúdos por disciplina.</p><button class="primary" onclick="show('materias')">Ver matérias</button></article><article class="card"><h2>Assistente de estudos</h2><p>Respostas frequentes e prática.</p><button class="primary" onclick="show('tutor')">Abrir tutor</button></article></section>
-<section id="materias" class="card"><h2>Biblioteca de estudos</h2><label for="subject">Disciplina</label><select id="subject"><option>Matemática</option><option>Biologia</option><option>Português</option><option>História</option><option>Geografia</option><option>Física</option><option>Química</option></select><label for="year">Ano escolar</label><select id="year"><option>1º ano do Ensino Médio</option><option>2º ano do Ensino Médio</option><option>3º ano do Ensino Médio</option></select><div class="chips" id="topics"></div></section>
-<section id="tutor" class="card hidden"><h2>Tirar dúvidas</h2><p>Escolha uma pergunta ou escreva sua dúvida.</p><div id="quick" class="chips"></div><label for="question">Digite sua dúvida</label><textarea id="question" aria-describedby="tutorHint" placeholder="Ex.: O que é uma função afim?"></textarea><p id="tutorHint" class="small">Dica: escreva o tema principal da dúvida. As respostas são cadastradas e não usam IA generativa.</p><div class="actions"><button class="primary" onclick="answer()">Buscar resposta</button><button onclick="speak()">Ouvir resposta</button><button onclick="speechSynthesis.cancel()">Parar leitura</button></div><div id="result" class="answer" aria-live="polite">Escolha uma pergunta ou digite sua dúvida.</div></section>
-<section id="atividades" class="card hidden"><h2>Praticar</h2><div id="quiz"></div><button class="primary" onclick="nextQuiz()">Nova questão</button></section><section class="card"><h2>Sobre o tutor</h2><p class="small">Este modo usa respostas locais cadastradas; não é uma IA generativa e não consulta a internet. Confirme dúvidas importantes com seu professor.</p></section></main><footer>Acessa+ Escola · Aprender com autonomia e acessibilidade.</footer>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#087f8c">
+<meta name="description" content="Acessa+ Escola: aprendizagem acessível, biblioteca escolar e Tutor IA.">
+<title>Acessa+ Escola</title>
+<style>
+:root {
+  --bg: #f1f8fa;
+  --card: #ffffff;
+  --text: #17343b;
+  --primary: #087f8c;
+  --primary-dark: #05616b;
+  --border: #cbdfe3;
+  --focus: #f0a202;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+}
+header {
+  background: var(--primary-dark);
+  color: white;
+  padding: 22px 16px;
+}
+.header-inner, main, footer {
+  max-width: 1000px;
+  margin: auto;
+}
+header h1 { margin: 0; font-size: 1.8rem; }
+header p { margin: 4px 0 0; }
+nav, .tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 0;
+}
+main { padding: 0 16px 28px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin: 12px 0;
+}
+h2 { margin-top: 0; }
+button, input, select, textarea {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  border: 2px solid var(--primary);
+  border-radius: 9px;
+  padding: 10px 14px;
+  background: white;
+  color: var(--primary-dark);
+}
+button.primary {
+  background: var(--primary);
+  color: white;
+}
+button:hover { filter: brightness(.94); }
+button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #819da4;
+  border-radius: 8px;
+  background: white;
+  color: #17343b;
+  margin: 6px 0 14px;
+}
+label { font-weight: bold; }
+.hidden { display: none !important; }
+.button-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.button-list button { text-align: left; }
+#result, #feedback {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.status {
+  padding: 12px;
+  border-radius: 8px;
+  background: #e8f5f6;
+}
+footer {
+  padding: 20px 16px;
+  color: #35545a;
+}
+.small { font-size: .92rem; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <h1>Acessa+ Escola</h1>
+    <p>Escola · Tecnologia · Educação · Inclusão</p>
+    <p>Aprenda no seu ritmo. Tire dúvidas e pratique.</p>
+  </div>
+</header>
+
+<main>
+  <nav aria-label="Navegação principal">
+    <button class="primary" onclick="show('inicio')">Início</button>
+    <button onclick="show('materias')">Biblioteca de estudos</button>
+    <button onclick="show('tutor')">Tutor IA</button>
+    <button onclick="show('atividades')">Praticar</button>
+  </nav>
+
+  <div class="tools" aria-label="Acessibilidade">
+    <button onclick="font(-1)" aria-label="Diminuir fonte">A−</button>
+    <button onclick="font(1)" aria-label="Aumentar fonte">A+</button>
+    <button onclick="speak()">Ler resposta em voz alta</button>
+    <button onclick="stopSpeaking()">Parar leitura</button>
+  </div>
+
+  <section id="inicio" class="card">
+    <h2>Bem-vindo ao Acessa+ Escola!</h2>
+    <p>Uma plataforma de estudos pensada para facilitar o acesso ao conhecimento.</p>
+    <div class="button-list">
+      <button class="primary" onclick="show('materias')">Estudar matérias</button>
+      <button class="primary" onclick="show('tutor')">Perguntar ao Tutor IA</button>
+      <button class="primary" onclick="show('atividades')">Fazer um quiz</button>
+    </div>
+  </section>
+
+  <section id="materias" class="card hidden">
+    <h2>Biblioteca de estudos</h2>
+    <p>Escolha uma disciplina para ver perguntas e explicações cadastradas.</p>
+    <label for="subject">Disciplina</label>
+    <select id="subject">
+      <option>Matemática</option>
+      <option>Biologia</option>
+      <option>Português</option>
+      <option>História</option>
+      <option>Geografia</option>
+      <option>Física</option>
+      <option>Química</option>
+    </select>
+    <div id="topics" class="button-list"></div>
+  </section>
+
+  <section id="tutor" class="card hidden">
+    <h2>Tutor IA</h2>
+    <p>Escreva sua dúvida. O tutor tentará explicar o assunto de maneira simples.</p>
+    <form id="tutorForm">
+      <label for="question">Sua pergunta</label>
+      <textarea id="question" rows="4"
+        placeholder="Ex.: Como calcular uma porcentagem?"
+        required></textarea>
+      <button class="primary" id="sendButton" type="submit">
+        Perguntar ao Tutor IA
+      </button>
+    </form>
+    <h3>Resposta</h3>
+    <div id="result" class="status" role="status" aria-live="polite">
+      Sua resposta aparecerá aqui.
+    </div>
+    <h3>Perguntas frequentes</h3>
+    <div id="quick" class="button-list"></div>
+    <p class="small">Confira as respostas e converse com seu professor quando precisar de orientação adicional.</p>
+  </section>
+
+  <section id="atividades" class="card hidden">
+    <h2>Praticar</h2>
+    <p>Responda às perguntas e veja sua pontuação.</p>
+    <div id="quiz"></div>
+    <p id="quizFeedback" class="status" aria-live="polite"></p>
+    <p id="score" aria-live="polite">Pontuação: 0</p>
+    <button class="primary" id="nextButton" onclick="nextQuiz()">
+      Próxima pergunta
+    </button>
+  </section>
+</main>
+
+<footer>
+  Acessa+ Escola · Educação e acessibilidade digital.
+</footer>
+
 <script>
-const data=[
-['Matemática','O que é uma função afim?','Uma função afim tem a forma f(x) = ax + b, em que a e b são números reais. Exemplo: f(x) = 2x + 3. Se x = 1, então f(1) = 2 × 1 + 3 = 5. O número a indica a inclinação da reta; b é o valor onde a reta cruza o eixo vertical.','função afim|funcao afim'],
-['Matemática','Como resolver uma equação do primeiro grau?','Uma equação é uma igualdade com um valor desconhecido. Faça a mesma operação nos dois lados. Exemplo: 2x + 4 = 10. Subtraia 4: 2x = 6. Divida por 2: x = 3. Confira: 2 × 3 + 4 = 10.','equação do primeiro grau|equacao do primeiro grau|equação|equacao'],
-['Matemática','O que é uma fração?','Uma fração representa partes de um todo. Em 3/4, o 4 mostra em quantas partes iguais o todo foi dividido e o 3 mostra quantas partes consideramos.','fração|fracao'],
-['Matemática','Como calcular porcentagem?','Porcentagem significa uma parte em cada 100. Para calcular 20% de 50, multiplique 0,20 × 50 = 10. Portanto, 20% de 50 é 10.','porcentagem|por cento'],
-['Biologia','O que é uma célula?','A célula é a unidade básica dos seres vivos. Alguns seres têm uma única célula; outros, como humanos e plantas, têm muitas. A membrana envolve a célula, o citoplasma ocupa seu interior e muitas células possuem núcleo, onde fica grande parte do DNA.','célula|celula|células|celulas'],
-['Biologia','O que é fotossíntese?','Fotossíntese é o processo em que plantas, algas e alguns microrganismos usam energia da luz para produzir açúcares a partir de água e dióxido de carbono. Em plantas, o processo libera oxigênio.','fotossíntese|fotossintese'],
-['Biologia','O que é reprodução assexuada?','É uma forma de reprodução que ocorre sem a união de gametas. Exemplos incluem divisão binária em bactérias e brotamento em leveduras.','reprodução assexuada|reproducao assexuada'],
-['Português','Como começar uma redação?','Comece apresentando o tema e o problema que será discutido. Depois, indique dois pontos que você vai desenvolver. Modelo: “Atualmente, [tema] é um assunto importante no Brasil. Nesse contexto, é necessário discutir [ponto 1] e [ponto 2].”','redação|redacao|como começar uma redação|como comecar uma redacao'],
-['Português','O que é uma metáfora?','Metáfora é uma figura de linguagem que aproxima duas ideias sem usar comparação explícita. Exemplo: “Aquela criança é um raio de sol” sugere que ela traz alegria.','metáfora|metafora'],
-['Português','O que são sujeito e predicado?','O sujeito é o termo sobre o qual a oração fala; o predicado é aquilo que se declara sobre o sujeito. Em “A estudante leu o livro”, “A estudante” é o sujeito e “leu o livro” é o predicado.','sujeito e predicado|sujeito|predicado'],
-['História','O que foi a Revolução Industrial?','Foi um processo de transformação econômica e social iniciado na Inglaterra no século XVIII, marcado pelo crescimento das fábricas, pelo uso de máquinas e por mudanças na produção e no trabalho.','revolução industrial|revolucao industrial'],
-['História','Quando ocorreu a Independência do Brasil?','A Independência do Brasil foi proclamada em 7 de setembro de 1822, em um processo político que rompeu os vínculos coloniais com Portugal.','independência do brasil|independencia do brasil'],
-['Geografia','Qual é a diferença entre tempo e clima?','Tempo atmosférico é a condição da atmosfera em um momento ou período curto, como chuva hoje. Clima é o padrão das condições atmosféricas observado em uma região ao longo de muitos anos.','tempo e clima|clima e tempo'],
-['Geografia','O que é urbanização?','Urbanização é o processo pelo qual aumenta a proporção da população que vive em cidades, acompanhado pelo crescimento das áreas urbanas. Exige planejamento de moradia, transporte, saneamento e áreas verdes.','urbanização|urbanizacao'],
-['Matemática','O que é uma razão matemática?','Razão é a comparação entre duas quantidades por meio de uma divisão. Exemplo: em uma turma com 10 meninas e 5 meninos, a razão entre meninas e meninos é 10/5 = 2, ou seja, 2 para 1.','razão matemática|razao matematica|razão|razao'],
-['Matemática','O que é média aritmética?','A média aritmética é calculada somando os valores e dividindo pela quantidade de valores. Exemplo: a média de 6, 8 e 10 é (6 + 8 + 10) / 3 = 8.','média aritmética|media aritmetica|média|media'],
-['Biologia','Qual é a diferença entre célula animal e vegetal?','As duas têm membrana, citoplasma e material genético. Em geral, a célula vegetal possui parede celular, cloroplastos e um grande vacúolo central; a célula animal não possui parede celular nem cloroplastos.','célula animal e vegetal|celula animal e vegetal'],
-['Português','O que é um substantivo?','Substantivo é a palavra que nomeia pessoas, animais, objetos, lugares, sentimentos ou ideias. Exemplos: estudante, cachorro, mesa, Teresina, alegria e liberdade.','substantivo'],
-['História','O que foi a escravidão no Brasil?','Foi um sistema de exploração que submeteu principalmente povos africanos e seus descendentes ao trabalho forçado durante séculos. A escravidão foi abolida legalmente no Brasil em 13 de maio de 1888, mas seus efeitos sociais persistem.','escravidão no brasil|escravidao no brasil'],
-['Geografia','O que é globalização?','Globalização é o aumento das conexões entre países por meio do comércio, das tecnologias, das informações, dos transportes e dos intercâmbios culturais. Ela cria oportunidades e também pode ampliar desigualdades.','globalização|globalizacao'],
-['Física','O que é velocidade média?','Velocidade média é a distância percorrida dividida pelo tempo gasto. Exemplo: se um veículo percorre 120 km em 2 horas, a velocidade média é 120 / 2 = 60 km/h.','velocidade média|velocidade media'],
-['Química','O que é um átomo?','O átomo é uma unidade básica da matéria. Ele tem um núcleo com prótons e nêutrons (exceto o hidrogênio mais comum, que não tem nêutron) e elétrons ao redor do núcleo.','átomo|atomo'],
-['Química','O que é uma mistura homogênea?','É uma mistura que apresenta aspecto uniforme e uma única fase visível. Exemplo: água com sal completamente dissolvido.','mistura homogênea|mistura homogenea']
-].map(x=>({s:x[0],q:x[1],a:x[2],tags:x[3].split('|')}));
-const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[?!.:,;]/g,' ').replace(/\s+/g,' ').trim();function show(id){['materias','tutor','atividades'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));document.getElementById(id).scrollIntoView({behavior:'smooth'})}let size=16;function font(n){size=Math.max(14,Math.min(24,size+n*2));document.body.style.fontSize=size+'px'}function speak(){if(!('speechSynthesis'in window)){alert('Leitura em voz alta não disponível neste navegador.');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(document.getElementById('result').innerText);u.lang='pt-BR';speechSynthesis.speak(u)}function answer(){let raw=document.getElementById('question').value.trim(),out=document.getElementById('result');if(!raw){out.textContent='Digite uma pergunta ou escolha uma pergunta frequente.';return}let n=norm(raw),item=data.find(x=>x.tags.some(t=>n.includes(norm(t)))||norm(x.q)===n); if(!item){const words=n.split(' ').filter(w=>w.length>3);item=data.map(x=>({x,score:words.filter(w=>norm(x.q+' '+x.tags.join(' ')).includes(w)).length})).sort((a,b)=>b.score-a.score)[0]?.score>=2?data.map(x=>({x,score:words.filter(w=>norm(x.q+' '+x.tags.join(' ')).includes(w)).length})).sort((a,b)=>b.score-a.score)[0].x:null;}out.textContent=item?item.q+'\n\n'+item.a+'\n\nDisciplina: '+item.s+' · Resposta cadastrada, sem IA.':'Tutor gratuito: pergunta ainda não cadastrada.\n\nEste tutor usa respostas locais e não é uma IA generativa; não vou inventar uma resposta. Tente uma pergunta frequente ou escolha uma matéria na biblioteca.'}function renderButtons(){let quick=document.getElementById('quick'),topics=document.getElementById('topics');quick.innerHTML='';topics.innerHTML='';data.forEach(x=>{let b=document.createElement('button');b.textContent=x.q;b.onclick=()=>{document.getElementById('question').value=x.q;answer();show('tutor')};quick.appendChild(b)});data.filter(x=>x.s===document.getElementById('subject').value).forEach(x=>{let b=document.createElement('button');b.textContent=x.q;b.onclick=()=>{document.getElementById('question').value=x.q;answer();show('tutor')};topics.appendChild(b)})}document.getElementById('subject').addEventListener('change',renderButtons);document.getElementById('question').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){answer()}});
-const qs=[['Se f(x)=2x+3, quanto vale f(1)?',['2','5','6'],1,'Substitua x por 1: 2 × 1 + 3 = 5.'],['Qual estrutura controla a entrada e saída de substâncias da célula?',['Membrana plasmática','Folha','Núcleo da escola'],0,'A membrana plasmática regula a passagem de substâncias.'],['Uma introdução de redação deve:',['Apresentar o tema','Repetir a conclusão','Fugir do assunto'],0,'A introdução apresenta o tema e pode indicar os pontos que serão desenvolvidos.'],['Tempo atmosférico descreve:',['Padrão de décadas','Condição da atmosfera em curto prazo','População'],1,'Tempo é observado em curto prazo; clima é o padrão ao longo de muitos anos.'],['A média de 4, 6 e 8 é:',['5','6','7'],1,'Some 4 + 6 + 8 = 18 e divida por 3: resultado 6.'],['Qual é a função principal da membrana plasmática?',['Produzir luz','Controlar a entrada e saída de substâncias','Guardar livros'],1,'A membrana regula a passagem de substâncias para dentro e para fora da célula.'],['Em que ano foi proclamada a Independência do Brasil?',['1500','1822','1889'],1,'A Independência do Brasil foi proclamada em 7 de setembro de 1822.'],['Uma mistura homogênea apresenta:',['Uma fase visível','Sempre duas fases','Somente sólidos'],0,'Uma mistura homogênea tem aspecto uniforme e uma única fase visível.']];let qi=0,quizScore=0,answeredQuiz=false;function renderQuiz(){let q=qs[qi],box=document.getElementById('quiz');box.innerHTML='<p>'+q[0]+'</p>';q[1].forEach((o,i)=>{let b=document.createElement('button');b.textContent=o;b.style.margin='.25rem';b.onclick=()=>{if(answeredQuiz)return;answeredQuiz=true;const ok=i===q[2];if(ok)quizScore++;document.getElementById('quizFeedback').textContent=(ok?'Correto! ':'Ainda não. ')+q[3]+' Pontuação: '+quizScore+'/'+(qi+1)+'.';Array.from(box.querySelectorAll('button')).forEach((btn,j)=>{btn.disabled=true;if(j===q[2])btn.style.border='2px solid #16803c'});};box.appendChild(b)});let p=document.createElement('p');p.id='quizFeedback';p.setAttribute('aria-live','polite');box.appendChild(p)}function nextQuiz(){qi=(qi+1)%qs.length;if(qi===0)quizScore=0;answeredQuiz=false;renderQuiz()}renderButtons();renderQuiz();
-</script></body></html>
+const AI_URL =
+  'https://acessa-mais-tutor.joaoconfigura15.workers.dev/';
+
+const data = [
+  ['Matemática','O que é uma função afim?',
+   'Uma função afim tem a forma f(x) = ax + b, em que a e b são números reais.'],
+  ['Matemática','Como resolver uma equação do primeiro grau?',
+   'Isole a incógnita, realizando operações equivalentes nos dois lados da igualdade.'],
+  ['Matemática','O que é uma fração?',
+   'Uma fração representa partes de um todo. Em 3/4, o 3 indica as partes consideradas e o 4 indica o total de partes iguais.'],
+  ['Matemática','Como calcular porcentagem?',
+   'Porcentagem significa uma parte em cada 100. Para calcular 20% de 50, faça 0,20 × 50 = 10.'],
+  ['Biologia','O que é uma célula?',
+   'A célula é a unidade básica dos seres vivos. Alguns seres têm uma única célula; outros têm muitas.'],
+  ['Biologia','O que é fotossíntese?',
+   'Fotossíntese é o processo pelo qual plantas, algas e alguns microrganismos usam energia da luz para produzir matéria orgânica.'],
+  ['Biologia','O que é reprodução assexuada?',
+   'É uma forma de reprodução que ocorre sem a união de gametas.'],
+  ['Português','Como começar uma redação?',
+   'Comece apresentando o tema e o problema que será discutido. Depois, indique os pontos que você desenvolverá.'],
+  ['Português','O que é uma metáfora?',
+   'Metáfora é uma figura de linguagem que aproxima ideias sem usar comparação explícita.'],
+  ['Português','O que são sujeito e predicado?',
+   'Sujeito é o termo sobre o qual se declara algo. Predicado é aquilo que se declara sobre o sujeito.'],
+  ['História','O que foi a Revolução Industrial?',
+   'Foi um processo de transformação econômica e social iniciado na Inglaterra no século XVIII, marcado pelo crescimento das fábricas e das máquinas.'],
+  ['História','Quando ocorreu a Independência do Brasil?',
+   'A Independência do Brasil foi proclamada em 7 de setembro de 1822.'],
+  ['História','O que foi a escravidão no Brasil?',
+   'Foi um sistema de exploração que submeteu pessoas à privação de liberdade e ao trabalho forçado, com forte impacto sobre africanos e seus descendentes.'],
+  ['Geografia','Qual é a diferença entre tempo e clima?',
+   'Tempo atmosférico descreve as condições da atmosfera em curto prazo. Clima corresponde aos padrões observados ao longo de muitos anos.'],
+  ['Geografia','O que é urbanização?',
+   'Urbanização é o processo de aumento da proporção da população que vive em cidades.'],
+  ['Geografia','O que é globalização?',
+   'Globalização é o aumento das conexões entre países por meio do comércio, da tecnologia, da cultura e da circulação de informações.'],
+  ['Física','O que é velocidade média?',
+   'Velocidade média é calculada dividindo a distância percorrida pelo tempo gasto, considerando a situação descrita.'],
+  ['Química','O que é um átomo?',
+   'O átomo é uma unidade básica da matéria. Possui um núcleo com prótons e nêutrons e elétrons ao redor.'],
+  ['Química','O que é uma mistura homogênea?',
+   'É uma mistura que apresenta aspecto uniforme e uma única fase visível.']
+];
+
+const norm = s => s.toLowerCase()
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[?!.:,;]/g, ' ').replace(/\s+/g, ' ').trim();
+
+function show(id) {
+  ['inicio','materias','tutor','atividades'].forEach(x =>
+    document.getElementById(x).classList.toggle('hidden', x !== id)
+  );
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+let fontSize = 17;
+function font(delta) {
+  fontSize = Math.max(14, Math.min(26, fontSize + delta * 2));
+  document.body.style.fontSize = fontSize + 'px';
+}
+
+function stopSpeaking() {
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
+function speak() {
+  if (!('speechSynthesis' in window)) {
+    alert('Leitura em voz alta não disponível neste navegador.');
+    return;
+  }
+  stopSpeaking();
+  const text = document.getElementById('result').innerText;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'pt-BR';
+  speechSynthesis.speak(utterance);
+}
+
+function localAnswer(question) {
+  const n = norm(question);
+  let item = data.find(x => norm(x[1]) === n);
+  if (!item) {
+    const words = n.split(' ').filter(w => w.length > 3);
+    const ranked = data.map(x => ({
+      item: x,
+      score: words.filter(w => norm(x[1] + ' ' + x[2]).includes(w)).length
+    })).sort((a,b) => b.score - a.score);
+    if (ranked[0] && ranked[0].score >= 2) item = ranked[0].item;
+  }
+  return item ? item[1] + '\n\n' + item[2] +
+    '\n\nDisciplina: ' + item[0] : null;
+}
+
+async function askAI(event) {
+  if (event) event.preventDefault();
+
+  const input = document.getElementById('question');
+  const out = document.getElementById('result');
+  const button = document.getElementById('sendButton');
+  const question = input.value.trim();
+
+  if (!question) {
+    out.textContent = 'Digite sua dúvida primeiro.';
+    return;
+  }
+
+  button.disabled = true;
+  out.textContent = 'Consultando o Tutor IA...';
+
+  try {
+    const response = await fetch(AI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Serviço indisponível.');
+    }
+
+    if (!result.answer) {
+      throw new Error('O serviço não retornou uma resposta.');
+    }
+
+    out.textContent = result.answer;
+  } catch (error) {
+    const saved = localAnswer(question);
+    if (saved) {
+      out.textContent = saved +
+        '\n\nNão consegui acessar a IA agora; esta é uma resposta cadastrada.';
+    } else {
+      out.textContent =
+        'Não consegui conectar ao Tutor IA neste momento. ' +
+        'Verifique a configuração do serviço e tente novamente.';
+    }
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function renderButtons() {
+  const quick = document.getElementById('quick');
+  const topics = document.getElementById('topics');
+  quick.replaceChildren();
+  topics.replaceChildren();
+
+  function makeButton(item) {
+    const b = document.createElement('button');
+    b.textContent = item[1];
+    b.onclick = () => {
+      document.getElementById('question').value = item[1];
+      show('tutor');
+      askAI();
+    };
+    return b;
+  }
+
+  data.slice(0, 6).forEach(x => quick.appendChild(makeButton(x)));
+
+  data.filter(x => x[0] === document.getElementById('subject').value)
+    .forEach(x => topics.appendChild(makeButton(x)));
+}
+
+document.getElementById('subject')
+  .addEventListener('change', renderButtons);
+
+document.getElementById('tutorForm')
+  .addEventListener('submit', askAI);
+
+document.getElementById('question')
+  .addEventListener('keydown', event => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+      askAI();
+    }
+  });
+
+const qs = [
+  ['Se f(x)=2x+3, quanto vale f(1)?',
+    ['2','5','6'], 1,
+    'Substitua x por 1: 2 × 1 + 3 = 5.'],
+  ['Qual estrutura controla a entrada e saída de substâncias da célula?',
+    ['Membrana plasmática','Folha','Núcleo da escola'], 0,
+    'A membrana plasmática regula a passagem de substâncias.'],
+  ['Uma introdução de redação deve:',
+    ['Apresentar o tema','Repetir a conclusão','Fugir do assunto'], 0,
+    'A introdução apresenta o tema e pode indicar os pontos que serão desenvolvidos.'],
+  ['Tempo atmosférico descreve:',
+    ['Padrão de décadas','Condição da atmosfera em curto prazo','População'], 1,
+    'Tempo é observado em curto prazo; clima é o padrão ao longo de muitos anos.'],
+  ['A média de 4, 6 e 8 é:',
+    ['5','6','7'], 1,
+    'Some 4 + 6 + 8 = 18 e divida por 3: resultado 6.'],
+  ['Em que ano foi proclamada a Independência do Brasil?',
+    ['1500','1822','1889'], 1,
+    'A Independência do Brasil foi proclamada em 7 de setembro de 1822.'],
+  ['Uma mistura homogênea apresenta:',
+    ['Uma fase visível','Sempre duas fases','Somente sólidos'], 0,
+    'Uma mistura homogênea tem aspecto uniforme e uma única fase visível.']
+];
+
+let qi = 0;
+let quizScore = 0;
+let answeredQuiz = false;
+
+function renderQuiz() {
+  const q = qs[qi];
+  const box = document.getElementById('quiz');
+  box.replaceChildren();
+
+  const question = document.createElement('p');
+  question.textContent = q[0];
+  box.appendChild(question);
+
+  q[1].forEach((option, i) => {
+    const b = document.createElement('button');
+    b.textContent = option;
+    b.style.margin = '.25rem';
+    b.onclick = () => {
+      if (answeredQuiz) return;
+      answeredQuiz = true;
+      const correct = i === q[2];
+      if (correct) quizScore++;
+
+      document.getElementById('quizFeedback').textContent =
+        (correct ? 'Correto! ' : 'Ainda não. ') + q[3];
+
+      document.getElementById('score').textContent =
+        'Pontuação: ' + quizScore + ' de ' + (qi + 1);
+
+      Array.from(box.querySelectorAll('button')).forEach((btn, j) => {
+        btn.disabled = true;
+        if (j === q[2]) btn.style.borderColor = '#16803c';
+      });
+    };
+    box.appendChild(b);
+  });
+
+  document.getElementById('quizFeedback').textContent = '';
+}
+
+function nextQuiz() {
+  qi++;
+  if (qi >= qs.length) {
+    qi = 0;
+    quizScore = 0;
+  }
+  answeredQuiz = false;
+  renderQuiz();
+}
+
+renderButtons();
+renderQuiz();
+</script>
+</body>
+</html>
+
